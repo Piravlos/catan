@@ -292,10 +292,12 @@
         <a class="bookmarklet-link" id="bookmarkletLink" href="#">
           ⚔️ Catan Helper
         </a>
+        <p style="margin-top: 16px; font-size: 0.95rem; opacity: 0.8;">or</p>
+        <button class="copy-btn" style="margin-top: 12px; width: auto; padding: 12px 24px;" onclick="copyCode(this)">📋 Copy to Clipboard</button>
       </div>
 
       <div class="tip">
-        <strong>💡 Tip:</strong> Can't see your bookmarks bar? Press <code>Ctrl+Shift+B</code> (Windows) or <code>Cmd+Shift+B</code> (Mac) to show it.
+        <strong>💡 Tip:</strong> Can't see your bookmarks bar? Press <code>Ctrl+Shift+B</code> (Windows) or <code>Cmd+Shift+B</code> (Mac) to show it. Alternatively, copy the code and paste it as a bookmark URL.
       </div>
     </section>
 
@@ -324,7 +326,7 @@
       </div>
 
       <div class="code-box" id="codeBox">Loading...</div>
-      <button class="copy-btn" onclick="copyCode()">📋 COPY CODE</button>
+      <button class="copy-btn" onclick="copyCode(this)">📋 COPY CODE</button>
     </section>
 
     <section class="panel">
@@ -389,10 +391,23 @@
     document.getElementById('bookmarkletLink').href = bookmarkletCode;
     document.getElementById('codeBox').textContent = bookmarkletCode;
 
-    function copyCode() {
-      navigator.clipboard.writeText(bookmarkletCode).then(() => {
-        alert('✅ Code copied!\\n\\nNow create a bookmark and paste this as the URL.');
-      }).catch(() => {
+    function copyCode(btn) {
+      const originalText = btn.textContent;
+
+      function showSuccess() {
+        btn.textContent = '✅ Copied!';
+        btn.style.background = '#4caf50';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = '';
+        }, 2000);
+      }
+
+      function showError() {
+        prompt('Copy this code manually:', bookmarkletCode);
+      }
+
+      navigator.clipboard.writeText(bookmarkletCode).then(showSuccess).catch(() => {
         // Fallback for older browsers / iOS
         const ta = document.createElement('textarea');
         ta.value = bookmarkletCode;
@@ -402,9 +417,9 @@
         ta.select();
         try {
           document.execCommand('copy');
-          alert('✅ Code copied!\\n\\nNow create a bookmark and paste this as the URL.');
+          showSuccess();
         } catch(e) {
-          prompt('Copy this code manually:', bookmarkletCode);
+          showError();
         }
         document.body.removeChild(ta);
       });
