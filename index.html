@@ -389,7 +389,8 @@
 
   <script>
     // Tiny loader bookmarklet - loads helper.js from GitHub Pages, auto-updates!
-    const bookmarkletCode = `javascript:(function(){var s=document.createElement('script');s.src='https://piravlos.github.io/catan/helper.js';document.head.appendChild(s)})();`;
+    // Uses Date.now() timestamp to bust browser cache and ensure fresh code on every use
+    const bookmarkletCode = `javascript:(function(){var s=document.createElement('script');s.src='https://piravlos.github.io/catan/helper.js?t='+Date.now();document.head.appendChild(s)})();`;
 
     // Set the bookmarklet href
     document.getElementById('bookmarkletLink').href = bookmarkletCode;
