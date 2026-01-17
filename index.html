@@ -242,14 +242,47 @@
     }
 
     .footer {
-      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       color: var(--parchment-mid);
       padding: 20px;
       font-size: 0.9rem;
+      gap: 20px;
+    }
+
+    .footer-content {
+      text-align: center;
+      flex: 1;
     }
 
     .footer a {
       color: var(--gold);
+    }
+
+    .lang-selector {
+      flex-shrink: 0;
+    }
+
+    .lang-select {
+      background: var(--burgundy);
+      color: var(--gold);
+      border: 2px solid var(--gold);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .lang-select:hover {
+      background: var(--burgundy-dark);
+    }
+
+    .lang-select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--gold);
     }
 
     .tip {
@@ -280,110 +313,118 @@
 <body>
   <div class="container">
     <header class="header">
-      <h1 class="title">⚔️ Catan Helper</h1>
-      <p class="subtitle">Cities & Knights Companion Tool</p>
+      <h1 class="title">⚔️ <span data-i18n="title">Catan Helper</span></h1>
+      <p class="subtitle" data-i18n="subtitle">Cities & Knights Companion Tool</p>
     </header>
 
     <section class="panel">
-      <h2>🖥️ Desktop Installation</h2>
-      <p>Drag this button to your bookmarks bar:</p>
-      
+      <h2>🖥️ <span data-i18n="desktopInstall">Desktop Installation</span></h2>
+      <p data-i18n="dragToBookmarks">Drag this button to your bookmarks bar:</p>
+
       <div class="bookmarklet-container">
         <a class="bookmarklet-link" id="bookmarkletLink" href="#">
-          ⚔️ Catan Helper
+          ⚔️ <span data-i18n="catanHelper">Catan Helper</span>
         </a>
-        <p style="margin-top: 16px; font-size: 0.95rem; opacity: 0.8;">or</p>
-        <button class="copy-btn" style="margin-top: 12px; width: auto; padding: 12px 24px;" onclick="copyCode(this)">📋 Copy to Clipboard</button>
+        <p style="margin-top: 16px; font-size: 0.95rem; opacity: 0.8;" data-i18n="or">or</p>
+        <button class="copy-btn" style="margin-top: 12px; width: auto; padding: 12px 24px;" onclick="copyCode(this)">📋 <span data-i18n="copyToClipboard">Copy to Clipboard</span></button>
       </div>
 
       <div class="tip">
-        <strong>💡 Tip:</strong> Can't see your bookmarks bar? Press <code>Ctrl+Shift+B</code> (Windows) or <code>Cmd+Shift+B</code> (Mac) to show it. Alternatively, copy the code and paste it as a bookmark URL.
+        <strong>💡 <span data-i18n="tipLabel">Tip:</span></strong> <span data-i18n="bookmarksTip">Can't see your bookmarks bar? Press <code>Ctrl+Shift+B</code> (Windows) or <code>Cmd+Shift+B</code> (Mac) to show it. Alternatively, copy the code and paste it as a bookmark URL.</span>
       </div>
 
       <div class="tip" style="background: rgba(76,175,80,0.2); border-color: #4caf50;">
-        <strong style="color: #4caf50;">Auto-Updates:</strong> Install once, always get the latest version! The tiny loader fetches the newest code automatically every time you use it.
+        <strong style="color: #4caf50;" data-i18n="autoUpdates">Auto-Updates:</strong> <span data-i18n="autoUpdatesTip">Install once, always get the latest version! The tiny loader fetches the newest code automatically every time you use it.</span>
       </div>
     </section>
 
     <section class="panel">
-      <h2>📱 Mobile Installation</h2>
-      
+      <h2>📱 <span data-i18n="mobileInstall">Mobile Installation</span></h2>
+
       <div class="mobile-section">
-        <h3>🍎 iPhone / Safari</h3>
+        <h3>🍎 <span data-i18n="iphoneSafari">iPhone / Safari</span></h3>
         <ol class="mobile-steps">
-          <li>Tap <strong>"Copy Code"</strong> below</li>
-          <li>Bookmark any page (Share → Add Bookmark)</li>
-          <li>Open Bookmarks, find it, tap <strong>Edit</strong></li>
-          <li>Delete the URL, <strong>paste the code</strong></li>
-          <li>Save!</li>
+          <li data-i18n="iphoneStep1">Tap <strong>"Copy Code"</strong> below</li>
+          <li data-i18n="iphoneStep2">Bookmark any page (Share → Add Bookmark)</li>
+          <li data-i18n="iphoneStep3">Open Bookmarks, find it, tap <strong>Edit</strong></li>
+          <li data-i18n="iphoneStep4">Delete the URL, <strong>paste the code</strong></li>
+          <li data-i18n="iphoneStep5">Save!</li>
         </ol>
       </div>
 
       <div class="mobile-section android">
-        <h3>🤖 Android / Chrome</h3>
+        <h3>🤖 <span data-i18n="androidChrome">Android / Chrome</span></h3>
         <ol class="mobile-steps">
-          <li>Tap <strong>"Copy Code"</strong> below</li>
-          <li>Tap ⋮ → Bookmarks → ⋮ on any bookmark → Edit</li>
-          <li>Replace URL with <strong>pasted code</strong></li>
-          <li>Or create new bookmark and paste as URL</li>
+          <li data-i18n="androidStep1">Tap <strong>"Copy Code"</strong> below</li>
+          <li data-i18n="androidStep2">Tap ⋮ → Bookmarks → ⋮ on any bookmark → Edit</li>
+          <li data-i18n="androidStep3">Replace URL with <strong>pasted code</strong></li>
+          <li data-i18n="androidStep4">Or create new bookmark and paste as URL</li>
         </ol>
       </div>
 
       <div class="code-box" id="codeBox">Loading...</div>
-      <button class="copy-btn" onclick="copyCode(this)">📋 COPY CODE</button>
+      <button class="copy-btn" onclick="copyCode(this)">📋 <span data-i18n="copyCode">COPY CODE</span></button>
     </section>
 
     <section class="panel">
-      <h2>🎮 How to Use</h2>
+      <h2>🎮 <span data-i18n="howToUse">How to Use</span></h2>
       <ol class="steps">
         <li>
-          <strong>Open your Catan game</strong><br>
-          Go to your game at <code>g.csdu.co.uk</code>
+          <strong data-i18n="step1Title">Open your Catan game</strong><br>
+          <span data-i18n="step1Desc">Go to your game at <code>g.csdu.co.uk</code></span>
         </li>
         <li>
-          <strong>Activate the helper</strong><br>
-          Click the bookmarklet (desktop) or type its name in the URL bar (mobile)
+          <strong data-i18n="step2Title">Activate the helper</strong><br>
+          <span data-i18n="step2Desc">Click the bookmarklet (desktop) or type its name in the URL bar (mobile)</span>
         </li>
         <li>
-          <strong>View your dashboard</strong><br>
-          See resources, building options, dev tracks & card descriptions
+          <strong data-i18n="step3Title">View your dashboard</strong><br>
+          <span data-i18n="step3Desc">See resources, building options, dev tracks & card descriptions</span>
         </li>
       </ol>
 
       <div class="tip">
-        <strong>📱 Mobile tip:</strong> The helper covers the full screen. Tap "Show Game" to see the board, run the bookmarklet again to bring back the helper.
+        <strong>📱 <span data-i18n="mobileTipLabel">Mobile tip:</span></strong> <span data-i18n="mobileTip">The helper covers the full screen. Tap "Show Game" to see the board, run the bookmarklet again to bring back the helper.</span>
       </div>
     </section>
 
     <section class="panel">
-      <h2>✨ Features</h2>
+      <h2>✨ <span data-i18n="features">Features</span></h2>
       <div class="features">
         <div class="feature">
           <div class="feature-icon">📦</div>
-          <h3 class="feature-title">Resources</h3>
-          <p>All resources & commodities at a glance</p>
+          <h3 class="feature-title" data-i18n="resourcesTitle">Resources</h3>
+          <p data-i18n="resourcesDesc">All resources & commodities at a glance</p>
         </div>
         <div class="feature">
           <div class="feature-icon">🏛️</div>
-          <h3 class="feature-title">Dev Tracks</h3>
-          <p>Trade, Science & Politics levels</p>
+          <h3 class="feature-title" data-i18n="devTracksTitle">Dev Tracks</h3>
+          <p data-i18n="devTracksDesc">Trade, Science & Politics levels</p>
         </div>
         <div class="feature">
           <div class="feature-icon">🔨</div>
-          <h3 class="feature-title">Build Guide</h3>
-          <p>See what you can afford to build</p>
+          <h3 class="feature-title" data-i18n="buildGuideTitle">Build Guide</h3>
+          <p data-i18n="buildGuideDesc">See what you can afford to build</p>
         </div>
         <div class="feature">
           <div class="feature-icon">📜</div>
-          <h3 class="feature-title">Card Info</h3>
-          <p>Full descriptions of progress cards</p>
+          <h3 class="feature-title" data-i18n="cardInfoTitle">Card Info</h3>
+          <p data-i18n="cardInfoDesc">Full descriptions of progress cards</p>
         </div>
       </div>
     </section>
 
     <footer class="footer">
-      <p>⚔️ Catan Helper • Not affiliated with Catan GmbH<br>
-      <a href="https://github.com" target="_blank">View on GitHub</a></p>
+      <div class="footer-content">
+        <p>⚔️ <span data-i18n="footerText">Catan Helper • Not affiliated with Catan GmbH</span><br>
+        <a href="https://github.com" target="_blank" data-i18n="viewOnGithub">View on GitHub</a></p>
+      </div>
+      <div class="lang-selector">
+        <select id="langSelect" class="lang-select">
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </div>
     </footer>
   </div>
 
@@ -400,7 +441,7 @@
       const originalText = btn.textContent;
 
       function showSuccess() {
-        btn.textContent = '✅ Copied!';
+        btn.textContent = '✅ ' + translations[currentLang].copied;
         btn.style.background = '#4caf50';
         setTimeout(() => {
           btn.textContent = originalText;
@@ -409,7 +450,7 @@
       }
 
       function showError() {
-        prompt('Copy this code manually:', bookmarkletCode);
+        prompt(translations[currentLang].copyManually, bookmarkletCode);
       }
 
       navigator.clipboard.writeText(bookmarkletCode).then(showSuccess).catch(() => {
@@ -429,6 +470,146 @@
         document.body.removeChild(ta);
       });
     }
+
+    // ===== INTERNATIONALIZATION =====
+    let currentLang = localStorage.getItem('ch-lang') || 'en';
+
+    const translations = {
+      en: {
+        title: "Catan Helper",
+        subtitle: "Cities & Knights Companion Tool",
+        desktopInstall: "Desktop Installation",
+        dragToBookmarks: "Drag this button to your bookmarks bar:",
+        catanHelper: "Catan Helper",
+        or: "or",
+        copyToClipboard: "Copy to Clipboard",
+        tipLabel: "Tip:",
+        bookmarksTip: "Can't see your bookmarks bar? Press <code>Ctrl+Shift+B</code> (Windows) or <code>Cmd+Shift+B</code> (Mac) to show it. Alternatively, copy the code and paste it as a bookmark URL.",
+        autoUpdates: "Auto-Updates:",
+        autoUpdatesTip: "Install once, always get the latest version! The tiny loader fetches the newest code automatically every time you use it.",
+        mobileInstall: "Mobile Installation",
+        iphoneSafari: "iPhone / Safari",
+        iphoneStep1: "Tap <strong>\"Copy Code\"</strong> below",
+        iphoneStep2: "Bookmark any page (Share → Add Bookmark)",
+        iphoneStep3: "Open Bookmarks, find it, tap <strong>Edit</strong>",
+        iphoneStep4: "Delete the URL, <strong>paste the code</strong>",
+        iphoneStep5: "Save!",
+        androidChrome: "Android / Chrome",
+        androidStep1: "Tap <strong>\"Copy Code\"</strong> below",
+        androidStep2: "Tap ⋮ → Bookmarks → ⋮ on any bookmark → Edit",
+        androidStep3: "Replace URL with <strong>pasted code</strong>",
+        androidStep4: "Or create new bookmark and paste as URL",
+        copyCode: "COPY CODE",
+        howToUse: "How to Use",
+        step1Title: "Open your Catan game",
+        step1Desc: "Go to your game at <code>g.csdu.co.uk</code>",
+        step2Title: "Activate the helper",
+        step2Desc: "Click the bookmarklet (desktop) or type its name in the URL bar (mobile)",
+        step3Title: "View your dashboard",
+        step3Desc: "See resources, building options, dev tracks & card descriptions",
+        mobileTipLabel: "Mobile tip:",
+        mobileTip: "The helper covers the full screen. Tap \"Show Game\" to see the board, run the bookmarklet again to bring back the helper.",
+        features: "Features",
+        resourcesTitle: "Resources",
+        resourcesDesc: "All resources & commodities at a glance",
+        devTracksTitle: "Dev Tracks",
+        devTracksDesc: "Trade, Science & Politics levels",
+        buildGuideTitle: "Build Guide",
+        buildGuideDesc: "See what you can afford to build",
+        cardInfoTitle: "Card Info",
+        cardInfoDesc: "Full descriptions of progress cards",
+        footerText: "Catan Helper • Not affiliated with Catan GmbH",
+        viewOnGithub: "View on GitHub",
+        copied: "Copied!",
+        copyManually: "Copy this code manually:"
+      },
+      de: {
+        title: "Catan Helfer",
+        subtitle: "Städte & Ritter Begleiter-Tool",
+        desktopInstall: "Desktop-Installation",
+        dragToBookmarks: "Ziehe diesen Button in deine Lesezeichen-Leiste:",
+        catanHelper: "Catan Helfer",
+        or: "oder",
+        copyToClipboard: "In Zwischenablage kopieren",
+        tipLabel: "Tipp:",
+        bookmarksTip: "Lesezeichen-Leiste nicht sichtbar? Drücke <code>Strg+Umschalt+B</code> (Windows) oder <code>Cmd+Umschalt+B</code> (Mac). Alternativ kopiere den Code und füge ihn als Lesezeichen-URL ein.",
+        autoUpdates: "Auto-Updates:",
+        autoUpdatesTip: "Einmal installieren, immer die neueste Version! Der kleine Loader lädt bei jeder Nutzung automatisch den neuesten Code.",
+        mobileInstall: "Mobile Installation",
+        iphoneSafari: "iPhone / Safari",
+        iphoneStep1: "Tippe unten auf <strong>\"Code kopieren\"</strong>",
+        iphoneStep2: "Beliebige Seite als Lesezeichen speichern (Teilen → Lesezeichen hinzufügen)",
+        iphoneStep3: "Lesezeichen öffnen, finden und <strong>Bearbeiten</strong> tippen",
+        iphoneStep4: "URL löschen und <strong>Code einfügen</strong>",
+        iphoneStep5: "Speichern!",
+        androidChrome: "Android / Chrome",
+        androidStep1: "Tippe unten auf <strong>\"Code kopieren\"</strong>",
+        androidStep2: "Tippe ⋮ → Lesezeichen → ⋮ bei einem Lesezeichen → Bearbeiten",
+        androidStep3: "URL durch <strong>eingefügten Code</strong> ersetzen",
+        androidStep4: "Oder neues Lesezeichen erstellen und Code als URL einfügen",
+        copyCode: "CODE KOPIEREN",
+        howToUse: "Anleitung",
+        step1Title: "Öffne dein Catan-Spiel",
+        step1Desc: "Gehe zu deinem Spiel auf <code>g.csdu.co.uk</code>",
+        step2Title: "Aktiviere den Helfer",
+        step2Desc: "Klicke das Lesezeichen (Desktop) oder tippe den Namen in die URL-Leiste (Mobil)",
+        step3Title: "Sieh dir dein Dashboard an",
+        step3Desc: "Rohstoffe, Bau-Optionen, Entwicklungsstufen & Kartenbeschreibungen",
+        mobileTipLabel: "Mobil-Tipp:",
+        mobileTip: "Der Helfer überdeckt den ganzen Bildschirm. Tippe \"Spiel anzeigen\" um das Brett zu sehen, starte das Lesezeichen erneut um den Helfer zurückzuholen.",
+        features: "Funktionen",
+        resourcesTitle: "Rohstoffe",
+        resourcesDesc: "Alle Rohstoffe & Waren auf einen Blick",
+        devTracksTitle: "Entwicklung",
+        devTracksDesc: "Handel, Wissenschaft & Politik Stufen",
+        buildGuideTitle: "Bauübersicht",
+        buildGuideDesc: "Sieh was du dir leisten kannst",
+        cardInfoTitle: "Karten-Info",
+        cardInfoDesc: "Vollständige Beschreibungen der Fortschrittskarten",
+        footerText: "Catan Helfer • Nicht mit Catan GmbH verbunden",
+        viewOnGithub: "Auf GitHub ansehen",
+        copied: "Kopiert!",
+        copyManually: "Kopiere diesen Code manuell:"
+      }
+    };
+
+    function t(key) {
+      return translations[currentLang][key] || translations.en[key] || key;
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('ch-lang', lang);
+      updatePageLanguage();
+    }
+
+    function updatePageLanguage() {
+      // Update all translatable elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (el.tagName === 'INPUT' || el.tagName === 'BUTTON') {
+          el.textContent = t(key);
+        } else {
+          el.innerHTML = t(key);
+        }
+      });
+
+      // Update language selector
+      document.getElementById('langSelect').value = currentLang;
+
+      // Update HTML lang attribute
+      document.documentElement.lang = currentLang;
+    }
+
+    // Initialize language on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('langSelect').value = currentLang;
+      updatePageLanguage();
+
+      document.getElementById('langSelect').addEventListener('change', (e) => {
+        setLanguage(e.target.value);
+      });
+    });
   </script>
 </body>
 </html>
