@@ -575,10 +575,7 @@
       h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/brick.png' + "' class='resImg'><span class='num'>" + r.brick + "</span></div>";
       h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/sheep.png' + "' class='resImg'><span class='num'>" + r.wool + "</span></div>";
       h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/grain.png' + "' class='resImg'><span class='num'>" + r.grain + "</span></div>";
-      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/stone.png' + "' class='resImg'><span class='num'>" + r.ore + "</span></div>";
-      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/cloth.png' + "' class='resImg'><span class='num'>" + r.cloth + "</span></div>";
-      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/coin.png' + "' class='resImg'><span class='num'>" + r.coin + "</span></div>";
-      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/paper.png' + "' class='resImg'><span class='num'>" + r.paper + "</span></div></div></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/stone.png' + "' class='resImg'><span class='num'>" + r.ore + "</span></div></div></div>";
 
       // Development tracks section
       h += "<div class='chS'><div class='chT'>" + t("development") + "</div><div class='chDv'>";
