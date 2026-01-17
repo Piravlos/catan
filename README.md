@@ -43,7 +43,3 @@ No server required - it's 100% client-side JavaScript.
 ## ⚠️ Disclaimer
 
 This tool is for personal use only. Not affiliated with Catan GmbH or Colonist.io.
-
-## 📄 License
-
-MIT - Do whatever you want with it!
