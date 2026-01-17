@@ -35,10 +35,48 @@
     408: { n: "Wedding", c: "politics", i: "💒", d: "Each player with more VP gives you 2 cards" }
   };
 
-  // Classic Catan development cards
+  // Classic Catan development cards - mapped by card ID from API
+  // Knight cards are typically IDs 1-14, VP cards 15-19, others 20-25
   var DC = {
+    // Knights (14 total)
+    1: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    2: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    3: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    4: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    5: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    6: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    7: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    8: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    9: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    10: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    11: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    12: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    13: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    14: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    // Victory Point cards (5 total)
+    15: { n: "Chapel", i: "⛪", d: "+1 Victory Point" },
+    16: { n: "Library", i: "📚", d: "+1 Victory Point" },
+    17: { n: "Market", i: "🏪", d: "+1 Victory Point" },
+    18: { n: "Palace", i: "🏛️", d: "+1 Victory Point" },
+    19: { n: "University", i: "🎓", d: "+1 Victory Point" },
+    // Progress cards (2 each)
+    20: { n: "Road Building", i: "🛤️", d: "Build 2 roads for free" },
+    21: { n: "Road Building", i: "🛤️", d: "Build 2 roads for free" },
+    22: { n: "Year of Plenty", i: "🎁", d: "Take any 2 resources from the bank" },
+    23: { n: "Year of Plenty", i: "🎁", d: "Take any 2 resources from the bank" },
+    24: { n: "Monopoly", i: "💰", d: "Name a resource, all players give you all of that type" },
+    25: { n: "Monopoly", i: "💰", d: "Name a resource, all players give you all of that type" }
+  };
+
+  // Fallback for string-based card types (some APIs use names instead of IDs)
+  var DC_BY_TYPE = {
     knight: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
     victory_point: { n: "Victory Point", i: "🏆", d: "+1 VP (Chapel, Library, Market, Palace, University)" },
+    chapel: { n: "Chapel", i: "⛪", d: "+1 Victory Point" },
+    library: { n: "Library", i: "📚", d: "+1 Victory Point" },
+    market: { n: "Market", i: "🏪", d: "+1 Victory Point" },
+    palace: { n: "Palace", i: "🏛️", d: "+1 Victory Point" },
+    university: { n: "University", i: "🎓", d: "+1 Victory Point" },
     road_building: { n: "Road Building", i: "🛤️", d: "Build 2 roads for free" },
     year_of_plenty: { n: "Year of Plenty", i: "🎁", d: "Take any 2 resources from the bank" },
     monopoly: { n: "Monopoly", i: "💰", d: "Name a resource, all players give you all of that type" }
@@ -302,9 +340,19 @@
       for (var k in B_CLASSIC) { var b = B_CLASSIC[k], ok = canBuild(b.c); h += "<div class='chBi " + (ok ? "y" : "n") + "'><span class='icon'>" + b.i + "</span><div class='info'><div class='name'>" + b.n + "</div><div class='cost'>" + costStr(b.c) + "</div></div></div>"; }
       h += "</div></div>";
 
-      // Development cards reference
-      h += "<div class='chS'><div class='chT'>Dev Card Reference</div><div class='chCds'>";
-      for (var dk in DC) { var dc = DC[dk]; h += "<div class='chCi science'><div class='chCh'><span class='icon'>" + dc.i + "</span><span class='chCn'>" + dc.n + "</span></div><div class='chCd-desc'>" + dc.d + "</div></div>"; }
+      // Development cards section - show player's actual cards
+      var devCards = pl.development_cards || pl.dev_cards || pl.cards || [];
+      h += "<div class='chS'><div class='chT'>Dev Cards (" + devCards.length + ")</div><div class='chCds'>";
+      if (devCards.length === 0) {
+        h += "<div style='opacity:.5;text-align:center;padding:12px;font-size:12px'>No development cards yet</div>";
+      } else {
+        for (var di = 0; di < devCards.length; di++) {
+          var cardId = devCards[di];
+          // Try to find card by numeric ID first, then by string type
+          var dc = DC[cardId] || DC_BY_TYPE[cardId] || DC_BY_TYPE[String(cardId).toLowerCase()] || { n: "Dev Card", i: "🃏", d: "Unknown card type" };
+          h += "<div class='chCi science'><div class='chCh'><span class='icon'>" + dc.i + "</span><span class='chCn'>" + dc.n + "</span></div><div class='chCd-desc'>" + dc.d + "</div></div>";
+        }
+      }
       h += "</div></div>";
 
     } else {
