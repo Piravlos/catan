@@ -1,4 +1,5 @@
-// Catan Helper v1 - Cities & Knights Companion
+// Catan Helper v2 - Classic & Cities & Knights Companion
+// Autodetects game type and shows appropriate UI
 // Loaded via tiny bookmarklet, cached in localStorage
 (function() {
   if (!location.hostname.includes("csdu.co.uk")) {
@@ -34,7 +35,50 @@
     408: { n: "Wedding", c: "politics", i: "💒", d: "Each player with more VP gives you 2 cards" }
   };
 
-  var B = {
+  // Classic Catan development cards
+  var DC = {
+    knight: { n: "Knight", i: "⚔️", d: "Move the robber. Largest Army = 2 VP" },
+    victory_point: { n: "Victory Point", i: "🏆", d: "+1 VP (Chapel, Library, Market, Palace, University)" },
+    road_building: { n: "Road Building", i: "🛤️", d: "Build 2 roads for free" },
+    year_of_plenty: { n: "Year of Plenty", i: "🎁", d: "Take any 2 resources from the bank" },
+    monopoly: { n: "Monopoly", i: "💰", d: "Name a resource, all players give you all of that type" }
+  };
+
+  // Game type: null = unknown, 'classic' = base game, 'ck' = Cities & Knights
+  var gameType = null;
+
+  // Detect game type from game state
+  function detectGameType(gs) {
+    // Check all players for cities_knights data
+    for (var i = 0; i < gs.players.length; i++) {
+      var pl = gs.players[i];
+      var ck = pl.cities_knights;
+      // If cities_knights exists and has any C&K specific data, it's a C&K game
+      if (ck && (
+        typeof ck.trade === 'number' ||
+        typeof ck.science === 'number' ||
+        typeof ck.politics === 'number' ||
+        typeof ck.cloth === 'number' ||
+        typeof ck.coin === 'number' ||
+        typeof ck.paper === 'number' ||
+        (ck.progress_cards && ck.progress_cards.length >= 0)
+      )) {
+        return 'ck';
+      }
+    }
+    return 'classic';
+  }
+
+  // Classic Catan buildings
+  var B_CLASSIC = {
+    road: { n: "Road", i: "🛣️", c: { lumber: 1, brick: 1 } },
+    settlement: { n: "Settlement", i: "🏠", c: { lumber: 1, brick: 1, wool: 1, grain: 1 } },
+    city: { n: "City", i: "🏰", c: { grain: 2, ore: 3 } },
+    devcard: { n: "Dev Card", i: "🃏", c: { wool: 1, grain: 1, ore: 1 } }
+  };
+
+  // Cities & Knights buildings (includes classic + C&K specific)
+  var B_CK = {
     road: { n: "Road", i: "🛣️", c: { lumber: 1, brick: 1 } },
     settlement: { n: "Settlement", i: "🏠", c: { lumber: 1, brick: 1, wool: 1, grain: 1 } },
     city: { n: "City", i: "🏰", c: { grain: 2, ore: 3 } },
@@ -44,6 +88,9 @@
     promote: { n: "Strong Knight", i: "💪", c: { wool: 1, ore: 1 } },
     mighty: { n: "Mighty Knight", i: "🦸", c: { wool: 1, ore: 1 } }
   };
+
+  // Alias for backwards compatibility
+  var B = B_CK;
 
   var p = new URLSearchParams(location.search);
   var gid = p.get("game_id"), pid = parseInt(p.get("player_id")) || 1;
@@ -112,13 +159,19 @@
     if (f && playerData) {
       f.querySelector(".chFc").style.background = clr[playerData.colour] || "#666";
       f.querySelector(".chFc").textContent = (playerData.colour || "?")[0];
-      f.querySelector(".chFn").textContent = playerData.colour;
+      // Update player name and game type badge
+      var fnEl = f.querySelector(".chFn");
+      var badgeHtml = '';
+      if (gameType) {
+        badgeHtml = '<span class="chGt ' + (gameType === 'ck' ? 'ck' : 'classic') + '">' + (gameType === 'ck' ? 'C&K' : 'Classic') + '</span>';
+      }
+      fnEl.innerHTML = (playerData.colour || '?') + badgeHtml;
     }
   }
 
   var o = document.createElement("div");
   o.id = "ch-overlay";
-  o.innerHTML = '<style>*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}html.ch-open,body.ch-open{overflow:hidden!important;position:fixed!important;width:100%!important;height:100%!important;touch-action:none}#ch-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#1a1210;font-family:-apple-system,system-ui,sans-serif;color:#f4e4bc;z-index:999999;display:flex;flex-direction:column;height:100%}.chScroll{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px;padding-top:max(12px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-bottom:12px}.chS{background:rgba(244,228,188,.06);border-radius:10px;padding:12px;margin-bottom:10px}.chT{font-weight:600;color:#c9a227;font-size:18px;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px}.chRes{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.chRi{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);padding:10px 14px;border-radius:20px}.chRi .em{font-size:32px}.chRi .num{font-weight:700;font-size:36px;min-width:22px;text-align:center}.chComm{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}.chDv{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.chDt{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);padding:10px 14px;border-radius:16px}.chDl{font-size:26px}.chDn{font-size:26px;font-weight:700}.chDc{display:flex;align-items:center;gap:4px;font-size:20px;margin-left:4px;padding-left:8px;border-left:1px solid rgba(255,255,255,.15)}.chDc .em{font-size:22px}.chDc .cnt{font-weight:600}.chDc .need{opacity:.6;font-size:16px}.chB{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.chBi{padding:12px;border-radius:8px;display:flex;align-items:center;gap:10px}.chBi.y{background:rgba(76,175,80,.2);border:1px solid rgba(76,175,80,.5)}.chBi.n{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);opacity:.35}.chBi .icon{font-size:36px}.chBi .info{flex:1;min-width:0}.chBi .name{font-weight:600;font-size:26px}.chBi .cost{font-size:24px;opacity:.7;margin-top:2px}.chCds{display:flex;flex-direction:column;gap:10px}.chCi{padding:12px 14px;border-radius:8px;border-left:4px solid}.chCi.science{border-color:#66bb6a;background:rgba(102,187,106,.1)}.chCi.trade{border-color:#ffeb3b;background:rgba(255,235,59,.08)}.chCi.politics{border-color:#42a5f5;background:rgba(66,165,245,.1)}.chCh{display:flex;gap:10px;align-items:center;margin-bottom:4px}.chCh .icon{font-size:28px}.chCn{font-weight:600;font-size:20px}.chCd-desc{font-size:18px;opacity:.8;line-height:1.4}.chF{background:linear-gradient(180deg,rgba(74,31,36,.95),rgba(44,24,16,.98));padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));display:flex;align-items:center;gap:10px;flex-shrink:0;border-top:1px solid rgba(201,162,39,.2)}.chFc{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:700;flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,.3)}.chFi{flex:1;min-width:0}.chFn{font-size:16px;font-weight:600;color:#f4e4bc}.chFs{font-size:12px;display:flex;align-items:center;gap:4px;margin-top:1px}.chFs.on{color:#4caf50}.chFs.off{color:#ff9800}.chTog{background:#c9a227;color:#2c1810;border:0;padding:10px 16px;border-radius:6px;font-weight:600;font-size:14px;cursor:pointer;flex-shrink:0}.chWake{opacity:0.3;transition:opacity 0.3s}</style><div class="chScroll" id="chScroll"><div id="chContent"><div style="text-align:center;padding:40px;opacity:.6">Connecting...</div></div></div><div class="chF" id="chFooter"><div class="chFc">?</div><div class="chFi"><div class="chFn">Connecting...</div><div class="chFs off" id="chStatus">● connecting<span id="chWakeInd" class="chWake"> ☀️</span></div></div><button class="chTog" id="chTogBtn">Show Game</button></div>';
+  o.innerHTML = '<style>*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}html.ch-open,body.ch-open{overflow:hidden!important;position:fixed!important;width:100%!important;height:100%!important;touch-action:none}#ch-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#1a1210;font-family:-apple-system,system-ui,sans-serif;color:#f4e4bc;z-index:999999;display:flex;flex-direction:column;height:100%}.chScroll{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px;padding-top:max(12px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-bottom:12px}.chS{background:rgba(244,228,188,.06);border-radius:10px;padding:12px;margin-bottom:10px}.chT{font-weight:600;color:#c9a227;font-size:18px;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px}.chRes{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.chRi{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);padding:10px 14px;border-radius:20px}.chRi .em{font-size:32px}.chRi .num{font-weight:700;font-size:36px;min-width:22px;text-align:center}.chComm{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}.chDv{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.chDt{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);padding:10px 14px;border-radius:16px}.chDl{font-size:26px}.chDn{font-size:26px;font-weight:700}.chDc{display:flex;align-items:center;gap:4px;font-size:20px;margin-left:4px;padding-left:8px;border-left:1px solid rgba(255,255,255,.15)}.chDc .em{font-size:22px}.chDc .cnt{font-weight:600}.chDc .need{opacity:.6;font-size:16px}.chB{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.chBi{padding:12px;border-radius:8px;display:flex;align-items:center;gap:10px}.chBi.y{background:rgba(76,175,80,.2);border:1px solid rgba(76,175,80,.5)}.chBi.n{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);opacity:.35}.chBi .icon{font-size:36px}.chBi .info{flex:1;min-width:0}.chBi .name{font-weight:600;font-size:26px}.chBi .cost{font-size:24px;opacity:.7;margin-top:2px}.chCds{display:flex;flex-direction:column;gap:10px}.chCi{padding:12px 14px;border-radius:8px;border-left:4px solid}.chCi.science{border-color:#66bb6a;background:rgba(102,187,106,.1)}.chCi.trade{border-color:#ffeb3b;background:rgba(255,235,59,.08)}.chCi.politics{border-color:#42a5f5;background:rgba(66,165,245,.1)}.chCh{display:flex;gap:10px;align-items:center;margin-bottom:4px}.chCh .icon{font-size:28px}.chCn{font-weight:600;font-size:20px}.chCd-desc{font-size:18px;opacity:.8;line-height:1.4}.chF{background:linear-gradient(180deg,rgba(74,31,36,.95),rgba(44,24,16,.98));padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));display:flex;align-items:center;gap:10px;flex-shrink:0;border-top:1px solid rgba(201,162,39,.2)}.chFc{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:700;flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,.3)}.chFi{flex:1;min-width:0}.chFn{font-size:16px;font-weight:600;color:#f4e4bc}.chFs{font-size:12px;display:flex;align-items:center;gap:4px;margin-top:1px}.chFs.on{color:#4caf50}.chFs.off{color:#ff9800}.chTog{background:#c9a227;color:#2c1810;border:0;padding:10px 16px;border-radius:6px;font-weight:600;font-size:14px;cursor:pointer;flex-shrink:0}.chWake{opacity:0.3;transition:opacity 0.3s}.chGt{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;text-transform:uppercase;margin-left:6px}.chGt.ck{background:rgba(102,187,106,.3);color:#66bb6a}.chGt.classic{background:rgba(255,193,7,.3);color:#ffc107}</style><div class="chScroll" id="chScroll"><div id="chContent"><div style="text-align:center;padding:40px;opacity:.6">Connecting...</div></div></div><div class="chF" id="chFooter"><div class="chFc">?</div><div class="chFi"><div class="chFn">Connecting...<span class="chGt"></span></div><div class="chFs off" id="chStatus">● connecting<span id="chWakeInd" class="chWake"> ☀️</span></div></div><button class="chTog" id="chTogBtn">Show Game</button></div>';
 
   var existing = document.getElementById("ch-overlay");
   if (existing) {
@@ -219,41 +272,88 @@
   function render(gs) {
     var pl = gs.players.find(function(x) { return x.id === pid; }) || gs.players[0];
     playerData = pl;
+
+    // Detect game type on first render
+    if (!gameType) {
+      gameType = detectGameType(gs);
+    }
+
     updateFooter();
     var ck = pl.cities_knights || {};
-    var r = { lumber: pl.lumber || 0, brick: pl.brick || 0, wool: pl.wool || 0, grain: pl.grain || 0, ore: pl.ore || 0, cloth: ck.cloth || 0, coin: ck.coin || 0, paper: ck.paper || 0 };
-    var tLv = ck.trade || 0, sLv = ck.science || 0, pLv = ck.politics || 0;
-    var h = "<div class='chS'><div class='chT'>Resources</div><div class='chRes'>";
-    h += "<div class='chRi'><span class='em'>🪵</span><span class='num'>" + r.lumber + "</span></div>";
-    h += "<div class='chRi'><span class='em'>🧱</span><span class='num'>" + r.brick + "</span></div>";
-    h += "<div class='chRi'><span class='em'>🐑</span><span class='num'>" + r.wool + "</span></div>";
-    h += "<div class='chRi'><span class='em'>🌾</span><span class='num'>" + r.grain + "</span></div>";
-    h += "<div class='chRi'><span class='em'>🪨</span><span class='num'>" + r.ore + "</span></div></div>";
-    h += "<div class='chRes chComm'>";
-    h += "<div class='chRi'><span class='em'>🧶</span><span class='num'>" + r.cloth + "</span></div>";
-    h += "<div class='chRi'><span class='em'>🪙</span><span class='num'>" + r.coin + "</span></div>";
-    h += "<div class='chRi'><span class='em'>📜</span><span class='num'>" + r.paper + "</span></div></div></div>";
-    h += "<div class='chS'><div class='chT'>Development</div><div class='chDv'>";
-    var tNeed = tLv < 5 ? Math.max(0, (tLv + 1) - r.cloth) : 0;
-    var sNeed = sLv < 5 ? Math.max(0, (sLv + 1) - r.paper) : 0;
-    var pNeed = pLv < 5 ? Math.max(0, (pLv + 1) - r.coin) : 0;
-    h += "<div class='chDt'><span class='chDl'>🟡</span><span class='chDn'>" + tLv + "/5</span><span class='chDc'><span class='em'>🧶</span><span class='cnt'>" + r.cloth + "</span>" + (tLv < 5 ? "<span class='need'>(" + (tNeed > 0 ? "need " + tNeed : "✓") + ")</span>" : "") + "</span></div>";
-    h += "<div class='chDt'><span class='chDl'>🟢</span><span class='chDn'>" + sLv + "/5</span><span class='chDc'><span class='em'>📜</span><span class='cnt'>" + r.paper + "</span>" + (sLv < 5 ? "<span class='need'>(" + (sNeed > 0 ? "need " + sNeed : "✓") + ")</span>" : "") + "</span></div>";
-    h += "<div class='chDt'><span class='chDl'>🔵</span><span class='chDn'>" + pLv + "/5</span><span class='chDc'><span class='em'>🪙</span><span class='cnt'>" + r.coin + "</span>" + (pLv < 5 ? "<span class='need'>(" + (pNeed > 0 ? "need " + pNeed : "✓") + ")</span>" : "") + "</span></div></div></div>";
-    h += "<div class='chS'><div class='chT'>Build</div><div class='chB'>";
+    var r = { lumber: pl.lumber || 0, brick: pl.brick || 0, wool: pl.wool || 0, grain: pl.grain || 0, ore: pl.ore || 0 };
+    var h = "";
+
     function canBuild(c) { for (var k in c) if ((r[k] || 0) < c[k]) return false; return true; }
     function costStr(c) { var s = []; var icons = { lumber: "🪵", brick: "🧱", wool: "🐑", grain: "🌾", ore: "🪨" }; for (var k in c) s.push(c[k] + icons[k]); return s.join(" "); }
-    for (var k in B) { var b = B[k], ok = canBuild(b.c); h += "<div class='chBi " + (ok ? "y" : "n") + "'><span class='icon'>" + b.i + "</span><div class='info'><div class='name'>" + b.n + "</div><div class='cost'>" + costStr(b.c) + "</div></div></div>"; }
-    var nxtT = tLv + 1, nxtS = sLv + 1, nxtP = pLv + 1;
-    if (tLv < 5) { h += "<div class='chBi " + (r.cloth >= nxtT ? "y" : "n") + "'><span class='icon'>🟡</span><div class='info'><div class='name'>Trade " + nxtT + "</div><div class='cost'>" + nxtT + "🧶</div></div></div>"; }
-    if (sLv < 5) { h += "<div class='chBi " + (r.paper >= nxtS ? "y" : "n") + "'><span class='icon'>🟢</span><div class='info'><div class='name'>Science " + nxtS + "</div><div class='cost'>" + nxtS + "📜</div></div></div>"; }
-    if (pLv < 5) { h += "<div class='chBi " + (r.coin >= nxtP ? "y" : "n") + "'><span class='icon'>🔵</span><div class='info'><div class='name'>Politics " + nxtP + "</div><div class='cost'>" + nxtP + "🪙</div></div></div>"; }
-    h += "</div></div>";
-    var cds = ck.progress_cards || [];
-    h += "<div class='chS'><div class='chT'>Cards (" + cds.length + ")</div><div class='chCds'>";
-    if (cds.length === 0) h += "<div style='opacity:.5;text-align:center;padding:12px;font-size:12px'>No progress cards yet</div>";
-    for (var i = 0; i < cds.length; i++) { var cd = C[cds[i]] || { n: "Unknown", c: "science", i: "❓", d: "Unknown card" }; h += "<div class='chCi " + cd.c + "'><div class='chCh'><span class='icon'>" + cd.i + "</span><span class='chCn'>" + cd.n + "</span></div><div class='chCd-desc'>" + cd.d + "</div></div>"; }
-    h += "</div></div>";
+
+    if (gameType === 'classic') {
+      // ===== CLASSIC CATAN UI =====
+
+      // Resources section (basic 5 only)
+      h += "<div class='chS'><div class='chT'>Resources</div><div class='chRes'>";
+      h += "<div class='chRi'><span class='em'>🪵</span><span class='num'>" + r.lumber + "</span></div>";
+      h += "<div class='chRi'><span class='em'>🧱</span><span class='num'>" + r.brick + "</span></div>";
+      h += "<div class='chRi'><span class='em'>🐑</span><span class='num'>" + r.wool + "</span></div>";
+      h += "<div class='chRi'><span class='em'>🌾</span><span class='num'>" + r.grain + "</span></div>";
+      h += "<div class='chRi'><span class='em'>🪨</span><span class='num'>" + r.ore + "</span></div></div></div>";
+
+      // Build section (classic buildings only)
+      h += "<div class='chS'><div class='chT'>Build</div><div class='chB'>";
+      for (var k in B_CLASSIC) { var b = B_CLASSIC[k], ok = canBuild(b.c); h += "<div class='chBi " + (ok ? "y" : "n") + "'><span class='icon'>" + b.i + "</span><div class='info'><div class='name'>" + b.n + "</div><div class='cost'>" + costStr(b.c) + "</div></div></div>"; }
+      h += "</div></div>";
+
+      // Development cards reference
+      h += "<div class='chS'><div class='chT'>Dev Card Reference</div><div class='chCds'>";
+      for (var dk in DC) { var dc = DC[dk]; h += "<div class='chCi science'><div class='chCh'><span class='icon'>" + dc.i + "</span><span class='chCn'>" + dc.n + "</span></div><div class='chCd-desc'>" + dc.d + "</div></div>"; }
+      h += "</div></div>";
+
+    } else {
+      // ===== CITIES & KNIGHTS UI =====
+
+      // Add commodities to resources
+      r.cloth = ck.cloth || 0;
+      r.coin = ck.coin || 0;
+      r.paper = ck.paper || 0;
+      var tLv = ck.trade || 0, sLv = ck.science || 0, pLv = ck.politics || 0;
+
+      // Resources section (basic + commodities)
+      h += "<div class='chS'><div class='chT'>Resources</div><div class='chRes'>";
+      h += "<div class='chRi'><span class='em'>🪵</span><span class='num'>" + r.lumber + "</span></div>";
+      h += "<div class='chRi'><span class='em'>🧱</span><span class='num'>" + r.brick + "</span></div>";
+      h += "<div class='chRi'><span class='em'>🐑</span><span class='num'>" + r.wool + "</span></div>";
+      h += "<div class='chRi'><span class='em'>🌾</span><span class='num'>" + r.grain + "</span></div>";
+      h += "<div class='chRi'><span class='em'>🪨</span><span class='num'>" + r.ore + "</span></div></div>";
+      h += "<div class='chRes chComm'>";
+      h += "<div class='chRi'><span class='em'>🧶</span><span class='num'>" + r.cloth + "</span></div>";
+      h += "<div class='chRi'><span class='em'>🪙</span><span class='num'>" + r.coin + "</span></div>";
+      h += "<div class='chRi'><span class='em'>📜</span><span class='num'>" + r.paper + "</span></div></div></div>";
+
+      // Development tracks section
+      h += "<div class='chS'><div class='chT'>Development</div><div class='chDv'>";
+      var tNeed = tLv < 5 ? Math.max(0, (tLv + 1) - r.cloth) : 0;
+      var sNeed = sLv < 5 ? Math.max(0, (sLv + 1) - r.paper) : 0;
+      var pNeed = pLv < 5 ? Math.max(0, (pLv + 1) - r.coin) : 0;
+      h += "<div class='chDt'><span class='chDl'>🟡</span><span class='chDn'>" + tLv + "/5</span><span class='chDc'><span class='em'>🧶</span><span class='cnt'>" + r.cloth + "</span>" + (tLv < 5 ? "<span class='need'>(" + (tNeed > 0 ? "need " + tNeed : "✓") + ")</span>" : "") + "</span></div>";
+      h += "<div class='chDt'><span class='chDl'>🟢</span><span class='chDn'>" + sLv + "/5</span><span class='chDc'><span class='em'>📜</span><span class='cnt'>" + r.paper + "</span>" + (sLv < 5 ? "<span class='need'>(" + (sNeed > 0 ? "need " + sNeed : "✓") + ")</span>" : "") + "</span></div>";
+      h += "<div class='chDt'><span class='chDl'>🔵</span><span class='chDn'>" + pLv + "/5</span><span class='chDc'><span class='em'>🪙</span><span class='cnt'>" + r.coin + "</span>" + (pLv < 5 ? "<span class='need'>(" + (pNeed > 0 ? "need " + pNeed : "✓") + ")</span>" : "") + "</span></div></div></div>";
+
+      // Build section (C&K buildings + development upgrades)
+      h += "<div class='chS'><div class='chT'>Build</div><div class='chB'>";
+      for (var k in B_CK) { var b = B_CK[k], ok = canBuild(b.c); h += "<div class='chBi " + (ok ? "y" : "n") + "'><span class='icon'>" + b.i + "</span><div class='info'><div class='name'>" + b.n + "</div><div class='cost'>" + costStr(b.c) + "</div></div></div>"; }
+      var nxtT = tLv + 1, nxtS = sLv + 1, nxtP = pLv + 1;
+      if (tLv < 5) { h += "<div class='chBi " + (r.cloth >= nxtT ? "y" : "n") + "'><span class='icon'>🟡</span><div class='info'><div class='name'>Trade " + nxtT + "</div><div class='cost'>" + nxtT + "🧶</div></div></div>"; }
+      if (sLv < 5) { h += "<div class='chBi " + (r.paper >= nxtS ? "y" : "n") + "'><span class='icon'>🟢</span><div class='info'><div class='name'>Science " + nxtS + "</div><div class='cost'>" + nxtS + "📜</div></div></div>"; }
+      if (pLv < 5) { h += "<div class='chBi " + (r.coin >= nxtP ? "y" : "n") + "'><span class='icon'>🔵</span><div class='info'><div class='name'>Politics " + nxtP + "</div><div class='cost'>" + nxtP + "🪙</div></div></div>"; }
+      h += "</div></div>";
+
+      // Progress cards section
+      var cds = ck.progress_cards || [];
+      h += "<div class='chS'><div class='chT'>Cards (" + cds.length + ")</div><div class='chCds'>";
+      if (cds.length === 0) h += "<div style='opacity:.5;text-align:center;padding:12px;font-size:12px'>No progress cards yet</div>";
+      for (var i = 0; i < cds.length; i++) { var cd = C[cds[i]] || { n: "Unknown", c: "science", i: "❓", d: "Unknown card" }; h += "<div class='chCi " + cd.c + "'><div class='chCh'><span class='icon'>" + cd.i + "</span><span class='chCn'>" + cd.n + "</span></div><div class='chCd-desc'>" + cd.d + "</div></div>"; }
+      h += "</div></div>";
+    }
+
     var scrollEl = document.getElementById("chScroll");
     var scrollPos = scrollEl.scrollTop;
     document.getElementById("chContent").innerHTML = h;
