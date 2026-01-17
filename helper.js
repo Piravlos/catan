@@ -311,6 +311,10 @@
     var pl = gs.players.find(function(x) { return x.id === pid; }) || gs.players[0];
     playerData = pl;
 
+    // Debug: log player object to see available properties (remove after debugging)
+    console.log('[Catan Helper] Player data:', JSON.stringify(pl, null, 2));
+    console.log('[Catan Helper] Player keys:', Object.keys(pl));
+
     // Detect game type on first render
     if (!gameType) {
       gameType = detectGameType(gs);
