@@ -105,7 +105,25 @@
       warlordDesc: "Activate all your knights for free",
       weddingDesc: "Each player with more VP gives you 2 cards",
       unknown: "Unknown",
-      unknownCard: "Unknown card"
+      unknownCard: "Unknown card",
+      // Development level benefits
+      tradeLevel1: "Yellow progress card draws begin",
+      tradeLevel2: "Trade commodities at 2:1",
+      tradeLevel3: "Metropolis possible (+2 VP)",
+      tradeLevel4: "Trade any resource at 2:1",
+      tradeLevel5: "Maximum level reached",
+      scienceLevel1: "Green progress card draws begin",
+      scienceLevel2: "City walls protect +2 cards",
+      scienceLevel3: "Metropolis possible (+2 VP)",
+      scienceLevel4: "Increased progress card draw chance",
+      scienceLevel5: "Maximum level reached",
+      politicsLevel1: "Blue progress card draws begin",
+      politicsLevel2: "Can build Strong Knights",
+      politicsLevel3: "Metropolis possible (+2 VP)",
+      politicsLevel4: "Can build Mighty Knights",
+      politicsLevel5: "Maximum level reached",
+      devInfoTitle: "Development Benefits",
+      levelLabel: "Level"
     },
     de: {
       // UI Labels
@@ -201,7 +219,25 @@
       warlordDesc: "Alle deine Ritter kostenlos aktivieren",
       weddingDesc: "Spieler mit mehr SP geben dir je 2 Karten",
       unknown: "Unbekannt",
-      unknownCard: "Unbekannte Karte"
+      unknownCard: "Unbekannte Karte",
+      // Development level benefits
+      tradeLevel1: "Gelbe Fortschrittskarten-Ziehung beginnt",
+      tradeLevel2: "Waren tauschen 2:1",
+      tradeLevel3: "Metropole möglich (+2 SP)",
+      tradeLevel4: "Jeden Rohstoff 2:1 tauschen",
+      tradeLevel5: "Maximalstufe erreicht",
+      scienceLevel1: "Grüne Fortschrittskarten-Ziehung beginnt",
+      scienceLevel2: "Stadtmauern schützen +2 Karten",
+      scienceLevel3: "Metropole möglich (+2 SP)",
+      scienceLevel4: "Erhöhte Fortschrittskarten-Ziehung",
+      scienceLevel5: "Maximalstufe erreicht",
+      politicsLevel1: "Blaue Fortschrittskarten-Ziehung beginnt",
+      politicsLevel2: "Starke Ritter bauen möglich",
+      politicsLevel3: "Metropole möglich (+2 SP)",
+      politicsLevel4: "Mächtige Ritter bauen möglich",
+      politicsLevel5: "Maximalstufe erreicht",
+      devInfoTitle: "Entwicklungsvorteile",
+      levelLabel: "Stufe"
     }
   };
 
@@ -230,6 +266,44 @@
   }
 
   var lastGameState = null;
+
+  // Development info modal functions
+  var devInfoData = {
+    trade: { icon: '🟡', nameKey: 'trade', levelKeys: ['tradeLevel1', 'tradeLevel2', 'tradeLevel3', 'tradeLevel4', 'tradeLevel5'] },
+    science: { icon: '🟢', nameKey: 'science', levelKeys: ['scienceLevel1', 'scienceLevel2', 'scienceLevel3', 'scienceLevel4', 'scienceLevel5'] },
+    politics: { icon: '🔵', nameKey: 'politics', levelKeys: ['politicsLevel1', 'politicsLevel2', 'politicsLevel3', 'politicsLevel4', 'politicsLevel5'] }
+  };
+
+  function showDevInfo(type, currentLevel) {
+    var data = devInfoData[type];
+    if (!data) return;
+
+    var modal = document.getElementById('chDevModal');
+    var iconEl = document.getElementById('chModalIcon');
+    var nameEl = document.getElementById('chModalName');
+    var bodyEl = document.getElementById('chModalBody');
+
+    iconEl.textContent = data.icon;
+    nameEl.textContent = t(data.nameKey);
+
+    var html = '';
+    for (var i = 0; i < 5; i++) {
+      var levelNum = i + 1;
+      var isCurrent = levelNum === currentLevel;
+      html += "<div class='chLevelItem" + (isCurrent ? " current" : "") + "'>";
+      html += "<div class='chLevelNum'>" + t('levelLabel') + " " + levelNum + (isCurrent ? " ★" : "") + "</div>";
+      html += "<div class='chLevelDesc'>" + t(data.levelKeys[i]) + "</div>";
+      html += "</div>";
+    }
+    bodyEl.innerHTML = html;
+
+    modal.classList.add('show');
+  }
+
+  function hideDevInfo() {
+    var modal = document.getElementById('chDevModal');
+    if (modal) modal.classList.remove('show');
+  }
 
   var C = {
     200: { nKey: "alchemist", c: "science", i: "🧪", dKey: "alchemistDesc" },
@@ -399,7 +473,7 @@
 
   var o = document.createElement("div");
   o.id = "ch-overlay";
-  o.innerHTML = '<style>*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}html.ch-open,body.ch-open{overflow:hidden!important;position:fixed!important;width:100%!important;height:100%!important;touch-action:none}#ch-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#1a1210;font-family:-apple-system,system-ui,sans-serif;color:#f4e4bc;z-index:999999;display:flex;flex-direction:column;height:100%}.chScroll{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px;padding-top:max(12px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-bottom:12px}.chS{background:rgba(244,228,188,.06);border-radius:10px;padding:12px;margin-bottom:10px}.chT{font-weight:600;color:#c9a227;font-size:22px;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}.chRes{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.chRi{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);padding:10px 14px;border-radius:20px}.chRi .em{font-size:40px}.chRi .num{font-weight:700;font-size:44px;min-width:26px;text-align:center}.resImg{width:50px;height:50px;object-fit:contain;vertical-align:middle}.chComm{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}.chDv{display:flex;flex-direction:column;gap:10px;align-items:center}.chDt{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);padding:10px 14px;border-radius:16px}.chDt.canUp{background:rgba(76,175,80,.25);border:1px solid rgba(76,175,80,.5)}.chDl{font-size:32px}.chDn{font-size:36px;font-weight:700}.chDc{display:flex;align-items:center;gap:6px;font-size:28px;margin-left:6px;padding-left:10px;border-left:1px solid rgba(255,255,255,.15)}.chDc .em{font-size:38px}.chDc .cnt{font-weight:600}.chDc .need{opacity:.6;font-size:20px}.chB{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.chBi{padding:12px;border-radius:8px;display:flex;align-items:center;gap:10px}.chBi.y{background:rgba(76,175,80,.2);border:1px solid rgba(76,175,80,.5)}.chBi.n{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);opacity:.35}.chBi .icon{font-size:44px}.chBi .info{flex:1;min-width:0}.chBi .name{font-weight:600;font-size:32px}.chBi .cost{font-size:40px;opacity:.7;margin-top:2px;word-spacing:-6px}.chCds{display:flex;flex-direction:column;gap:10px}.chCi{padding:25px 27px;border-radius:10px;border-left:5px solid}.chCi.science{border-color:#66bb6a;background:rgba(102,187,106,.1)}.chCi.trade{border-color:#ffeb3b;background:rgba(255,235,59,.08)}.chCi.politics{border-color:#42a5f5;background:rgba(66,165,245,.1)}.chCh{display:flex;gap:12px;align-items:center;margin-bottom:6px}.chCh .icon{font-size:44px}.chCn{font-weight:600;font-size:36px}.chCd-desc{font-size:32px;opacity:.8;line-height:1.4}.chF{background:linear-gradient(180deg,rgba(74,31,36,.95),rgba(44,24,16,.98));padding:16px 22px;padding-bottom:max(16px,env(safe-area-inset-bottom));padding-left:max(22px,env(safe-area-inset-left));padding-right:max(22px,env(safe-area-inset-right));display:flex;align-items:center;gap:16px;flex-shrink:0;border-top:1px solid rgba(201,162,39,.2)}.chFc{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:29px;color:#fff;font-weight:700;flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,.3)}.chFi{flex:1;min-width:0}.chFn{font-size:25px;font-weight:600;color:#f4e4bc}.chFs{font-size:18px;display:flex;align-items:center;gap:7px;margin-top:1px}.chFs.on{color:#4caf50}.chFs.off{color:#ff9800}.chTog{background:#c9a227;color:#2c1810;border:0;padding:16px 25px;border-radius:9px;font-weight:600;font-size:22px;cursor:pointer;flex-shrink:0}.chWake{opacity:0.3;transition:opacity 0.3s}.chGt{font-size:16px;padding:3px 9px;border-radius:7px;font-weight:600;text-transform:uppercase;margin-left:9px}.chGt.ck{background:rgba(102,187,106,.3);color:#66bb6a}.chGt.classic{background:rgba(255,193,7,.3);color:#ffc107}.chLang{background:rgba(255,255,255,.1);color:#f4e4bc;border:1px solid rgba(201,162,39,.3);border-radius:9px;padding:9px 13px;font-size:18px;cursor:pointer;flex-shrink:0}.chLang:focus{outline:none;border-color:#c9a227}</style><div class="chScroll" id="chScroll"><div id="chContent"><div style="text-align:center;padding:40px;opacity:.6" id="chConnecting"></div></div></div><div class="chF" id="chFooter"><div class="chFc">?</div><div class="chFi"><div class="chFn" id="chFnText"></div><div class="chFs off" id="chStatus"><span id="chWakeInd" class="chWake"> ☀️</span></div></div><select class="chLang" id="chLangSel"><option value="en">EN</option><option value="de">DE</option></select><button class="chTog" id="chTogBtn"></button></div>';
+  o.innerHTML = '<style>*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}html.ch-open,body.ch-open{overflow:hidden!important;position:fixed!important;width:100%!important;height:100%!important;touch-action:none}#ch-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#1a1210;font-family:-apple-system,system-ui,sans-serif;color:#f4e4bc;z-index:999999;display:flex;flex-direction:column;height:100%}.chScroll{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px;padding-top:max(12px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-bottom:12px}.chS{background:rgba(244,228,188,.06);border-radius:10px;padding:12px;margin-bottom:10px}.chT{font-weight:600;color:#c9a227;font-size:22px;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}.chRes{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.chRi{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);padding:10px 14px;border-radius:20px}.chRi .em{font-size:40px}.chRi .num{font-weight:700;font-size:44px;min-width:26px;text-align:center}.resImg{width:50px;height:50px;object-fit:contain;vertical-align:middle}.chComm{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}.chDv{display:flex;flex-direction:column;gap:10px;align-items:center}.chDt{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);padding:10px 14px;border-radius:16px}.chDt.canUp{background:rgba(76,175,80,.25);border:1px solid rgba(76,175,80,.5)}.chDl{font-size:32px}.chDn{font-size:36px;font-weight:700}.chDc{display:flex;align-items:center;gap:6px;font-size:28px;margin-left:6px;padding-left:10px;border-left:1px solid rgba(255,255,255,.15)}.chDc .em{font-size:38px}.chDc .cnt{font-weight:600}.chDc .need{opacity:.6;font-size:20px}.chB{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.chBi{padding:12px;border-radius:8px;display:flex;align-items:center;gap:10px}.chBi.y{background:rgba(76,175,80,.2);border:1px solid rgba(76,175,80,.5)}.chBi.n{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);opacity:.35}.chBi .icon{font-size:44px}.chBi .info{flex:1;min-width:0}.chBi .name{font-weight:600;font-size:32px}.chBi .cost{font-size:40px;opacity:.7;margin-top:2px;word-spacing:-6px}.chCds{display:flex;flex-direction:column;gap:10px}.chCi{padding:25px 27px;border-radius:10px;border-left:5px solid}.chCi.science{border-color:#66bb6a;background:rgba(102,187,106,.1)}.chCi.trade{border-color:#ffeb3b;background:rgba(255,235,59,.08)}.chCi.politics{border-color:#42a5f5;background:rgba(66,165,245,.1)}.chCh{display:flex;gap:12px;align-items:center;margin-bottom:6px}.chCh .icon{font-size:44px}.chCn{font-weight:600;font-size:36px}.chCd-desc{font-size:32px;opacity:.8;line-height:1.4}.chF{background:linear-gradient(180deg,rgba(74,31,36,.95),rgba(44,24,16,.98));padding:16px 22px;padding-bottom:max(16px,env(safe-area-inset-bottom));padding-left:max(22px,env(safe-area-inset-left));padding-right:max(22px,env(safe-area-inset-right));display:flex;align-items:center;gap:16px;flex-shrink:0;border-top:1px solid rgba(201,162,39,.2)}.chFc{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:29px;color:#fff;font-weight:700;flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,.3)}.chFi{flex:1;min-width:0}.chFn{font-size:25px;font-weight:600;color:#f4e4bc}.chFs{font-size:18px;display:flex;align-items:center;gap:7px;margin-top:1px}.chFs.on{color:#4caf50}.chFs.off{color:#ff9800}.chTog{background:#c9a227;color:#2c1810;border:0;padding:16px 25px;border-radius:9px;font-weight:600;font-size:22px;cursor:pointer;flex-shrink:0}.chWake{opacity:0.3;transition:opacity 0.3s}.chGt{font-size:16px;padding:3px 9px;border-radius:7px;font-weight:600;text-transform:uppercase;margin-left:9px}.chGt.ck{background:rgba(102,187,106,.3);color:#66bb6a}.chGt.classic{background:rgba(255,193,7,.3);color:#ffc107}.chLang{background:rgba(255,255,255,.1);color:#f4e4bc;border:1px solid rgba(201,162,39,.3);border-radius:9px;padding:9px 13px;font-size:18px;cursor:pointer;flex-shrink:0}.chLang:focus{outline:none;border-color:#c9a227}.chInfoBtn{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#f4e4bc;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:8px;flex-shrink:0;transition:background .2s}.chInfoBtn:hover,.chInfoBtn:active{background:rgba(255,255,255,.25)}.chModal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:1000000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}.chModal.show{opacity:1;visibility:visible}.chModalContent{background:#2c1810;border:1px solid rgba(201,162,39,.4);border-radius:12px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto}.chModalHeader{padding:16px 20px;border-bottom:1px solid rgba(201,162,39,.2);display:flex;align-items:center;justify-content:space-between}.chModalTitle{font-size:20px;font-weight:600;color:#c9a227;display:flex;align-items:center;gap:10px}.chModalClose{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#f4e4bc;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}.chModalClose:hover{background:rgba(255,255,255,.2)}.chModalBody{padding:16px 20px}.chLevelItem{padding:12px;margin-bottom:8px;border-radius:8px;background:rgba(255,255,255,.05)}.chLevelItem:last-child{margin-bottom:0}.chLevelItem.current{background:rgba(201,162,39,.2);border:1px solid rgba(201,162,39,.4)}.chLevelNum{font-weight:700;font-size:16px;color:#c9a227;margin-bottom:4px}.chLevelDesc{font-size:14px;opacity:.85;line-height:1.4}</style><div class="chScroll" id="chScroll"><div id="chContent"><div style="text-align:center;padding:40px;opacity:.6" id="chConnecting"></div></div></div><div class="chF" id="chFooter"><div class="chFc">?</div><div class="chFi"><div class="chFn" id="chFnText"></div><div class="chFs off" id="chStatus"><span id="chWakeInd" class="chWake"> ☀️</span></div></div><select class="chLang" id="chLangSel"><option value="en">EN</option><option value="de">DE</option></select><button class="chTog" id="chTogBtn"></button></div><div class="chModal" id="chDevModal"><div class="chModalContent"><div class="chModalHeader"><div class="chModalTitle"><span id="chModalIcon"></span><span id="chModalName"></span></div><button class="chModalClose" id="chModalClose">&times;</button></div><div class="chModalBody" id="chModalBody"></div></div></div>';
 
   var existing = document.getElementById("ch-overlay");
   if (existing) {
@@ -441,6 +515,22 @@
     document.documentElement.classList.remove("ch-open");
     document.body.classList.remove("ch-open");
   };
+
+  // Modal event listeners
+  document.getElementById("chModalClose").onclick = hideDevInfo;
+  document.getElementById("chDevModal").onclick = function(e) {
+    if (e.target === this) hideDevInfo();
+  };
+
+  // Event delegation for info buttons
+  document.getElementById("chScroll").addEventListener("click", function(e) {
+    var btn = e.target.closest('.chInfoBtn');
+    if (btn) {
+      var devType = btn.getAttribute('data-dev');
+      var level = parseInt(btn.getAttribute('data-level')) || 0;
+      showDevInfo(devType, level);
+    }
+  });
 
   var ws, ref = 0, jref, intv, reconnectAttempts = 0, reconnectTimer;
 
@@ -585,9 +675,9 @@
       var tCanUp = tLv < 5 && tNeed === 0;
       var sCanUp = sLv < 5 && sNeed === 0;
       var pCanUp = pLv < 5 && pNeed === 0;
-      h += "<div class='chDt" + (tCanUp ? " canUp" : "") + "'><span class='chDl'>🟡</span><span class='chDn'>" + tLv + "/5</span><span class='chDc'><img src='" + 'https://piravlos.github.io/catan/images/cloth.png' + "' class='resImg'><span class='cnt'>" + r.cloth + "</span>" + (tLv < 5 ? "<span class='need'>(" + (tNeed > 0 ? t("need") + " " + tNeed : "✓") + ")</span>" : "") + "</span></div>";
-      h += "<div class='chDt" + (sCanUp ? " canUp" : "") + "'><span class='chDl'>🟢</span><span class='chDn'>" + sLv + "/5</span><span class='chDc'><img src='" + 'https://piravlos.github.io/catan/images/paper.png' + "' class='resImg'><span class='cnt'>" + r.paper + "</span>" + (sLv < 5 ? "<span class='need'>(" + (sNeed > 0 ? t("need") + " " + sNeed : "✓") + ")</span>" : "") + "</span></div>";
-      h += "<div class='chDt" + (pCanUp ? " canUp" : "") + "'><span class='chDl'>🔵</span><span class='chDn'>" + pLv + "/5</span><span class='chDc'><img src='" + 'https://piravlos.github.io/catan/images/coin.png' + "' class='resImg'><span class='cnt'>" + r.coin + "</span>" + (pLv < 5 ? "<span class='need'>(" + (pNeed > 0 ? t("need") + " " + pNeed : "✓") + ")</span>" : "") + "</span></div></div></div>";
+      h += "<div class='chDt" + (tCanUp ? " canUp" : "") + "'><span class='chDl'>🟡</span><span class='chDn'>" + tLv + "/5</span><span class='chDc'><img src='" + 'https://piravlos.github.io/catan/images/cloth.png' + "' class='resImg'><span class='cnt'>" + r.cloth + "</span>" + (tLv < 5 ? "<span class='need'>(" + (tNeed > 0 ? t("need") + " " + tNeed : "✓") + ")</span>" : "") + "</span><button class='chInfoBtn' data-dev='trade' data-level='" + tLv + "'>i</button></div>";
+      h += "<div class='chDt" + (sCanUp ? " canUp" : "") + "'><span class='chDl'>🟢</span><span class='chDn'>" + sLv + "/5</span><span class='chDc'><img src='" + 'https://piravlos.github.io/catan/images/paper.png' + "' class='resImg'><span class='cnt'>" + r.paper + "</span>" + (sLv < 5 ? "<span class='need'>(" + (sNeed > 0 ? t("need") + " " + sNeed : "✓") + ")</span>" : "") + "</span><button class='chInfoBtn' data-dev='science' data-level='" + sLv + "'>i</button></div>";
+      h += "<div class='chDt" + (pCanUp ? " canUp" : "") + "'><span class='chDl'>🔵</span><span class='chDn'>" + pLv + "/5</span><span class='chDc'><img src='" + 'https://piravlos.github.io/catan/images/coin.png' + "' class='resImg'><span class='cnt'>" + r.coin + "</span>" + (pLv < 5 ? "<span class='need'>(" + (pNeed > 0 ? t("need") + " " + pNeed : "✓") + ")</span>" : "") + "</span><button class='chInfoBtn' data-dev='politics' data-level='" + pLv + "'>i</button></div></div></div>";
 
       // Build section (C&K buildings only - development upgrades shown in Development section)
       h += "<div class='chS'><div class='chT'>" + t("build") + "</div><div class='chB'>";
