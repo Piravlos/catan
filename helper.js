@@ -522,18 +522,18 @@
     var h = "";
 
     function canBuild(c) { for (var k in c) if ((r[k] || 0) < c[k]) return false; return true; }
-    function costStr(c) { var s = []; var icons = { lumber: "images/wood.png", brick: "images/brick.png", wool: "images/sheep.png", grain: "images/grain.png", ore: "images/stone.png" }; for (var k in c) s.push(c[k] + "<img src='" + icons[k] + "' class='resImg'>"); return s.join(" "); }
+    function costStr(c) { var s = []; var icons = { lumber: 'https://piravlos.github.io/catan/images/wood.png', brick: 'https://piravlos.github.io/catan/images/brick.png', wool: 'https://piravlos.github.io/catan/images/sheep.png', grain: 'https://piravlos.github.io/catan/images/grain.png', ore: 'https://piravlos.github.io/catan/images/stone.png' }; for (var k in c) s.push(c[k] + "<img src='" + icons[k] + "' class='resImg'>"); return s.join(" "); }
 
     if (gameType === 'classic') {
       // ===== CLASSIC CATAN UI =====
 
       // Resources section (basic 5 only)
       h += "<div class='chS'><div class='chT'>" + t("resources") + "</div><div class='chRes'>";
-      h += "<div class='chRi'><img src='images/wood.png' class='resImg'><span class='num'>" + r.lumber + "</span></div>";
-      h += "<div class='chRi'><img src='images/brick.png' class='resImg'><span class='num'>" + r.brick + "</span></div>";
-      h += "<div class='chRi'><img src='images/sheep.png' class='resImg'><span class='num'>" + r.wool + "</span></div>";
-      h += "<div class='chRi'><img src='images/grain.png' class='resImg'><span class='num'>" + r.grain + "</span></div>";
-      h += "<div class='chRi'><img src='images/stone.png' class='resImg'><span class='num'>" + r.ore + "</span></div></div></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/wood.png' + "' class='resImg'><span class='num'>" + r.lumber + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/brick.png' + "' class='resImg'><span class='num'>" + r.brick + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/sheep.png' + "' class='resImg'><span class='num'>" + r.wool + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/grain.png' + "' class='resImg'><span class='num'>" + r.grain + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/stone.png' + "' class='resImg'><span class='num'>" + r.ore + "</span></div></div></div>";
 
       // Build section (classic buildings only)
       h += "<div class='chS'><div class='chT'>" + t("build") + "</div><div class='chB'>";
@@ -571,14 +571,14 @@
 
       // Resources section (basic + commodities)
       h += "<div class='chS'><div class='chT'>" + t("resources") + "</div><div class='chRes'>";
-      h += "<div class='chRi'><img src='images/wood.png' class='resImg'><span class='num'>" + r.lumber + "</span></div>";
-      h += "<div class='chRi'><img src='images/brick.png' class='resImg'><span class='num'>" + r.brick + "</span></div>";
-      h += "<div class='chRi'><img src='images/sheep.png' class='resImg'><span class='num'>" + r.wool + "</span></div>";
-      h += "<div class='chRi'><img src='images/grain.png' class='resImg'><span class='num'>" + r.grain + "</span></div>";
-      h += "<div class='chRi'><img src='images/stone.png' class='resImg'><span class='num'>" + r.ore + "</span></div>";
-      h += "<div class='chRi'><img src='images/cloth.png' class='resImg'><span class='num'>" + r.cloth + "</span></div>";
-      h += "<div class='chRi'><img src='images/coin.png' class='resImg'><span class='num'>" + r.coin + "</span></div>";
-      h += "<div class='chRi'><img src='images/paper.png' class='resImg'><span class='num'>" + r.paper + "</span></div></div></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/wood.png' + "' class='resImg'><span class='num'>" + r.lumber + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/brick.png' + "' class='resImg'><span class='num'>" + r.brick + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/sheep.png' + "' class='resImg'><span class='num'>" + r.wool + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/grain.png' + "' class='resImg'><span class='num'>" + r.grain + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/stone.png' + "' class='resImg'><span class='num'>" + r.ore + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/cloth.png' + "' class='resImg'><span class='num'>" + r.cloth + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/coin.png' + "' class='resImg'><span class='num'>" + r.coin + "</span></div>";
+      h += "<div class='chRi'><img src='" + 'https://piravlos.github.io/catan/images/paper.png' + "' class='resImg'><span class='num'>" + r.paper + "</span></div></div></div>";
 
       // Development tracks section
       h += "<div class='chS'><div class='chT'>" + t("development") + "</div><div class='chDv'>";
@@ -588,9 +588,9 @@
       var tCanUp = tLv < 5 && tNeed === 0;
       var sCanUp = sLv < 5 && sNeed === 0;
       var pCanUp = pLv < 5 && pNeed === 0;
-      h += "<div class='chDt" + (tCanUp ? " canUp" : "") + "'><span class='chDl'>🟡</span><span class='chDn'>" + tLv + "/5</span><span class='chDc'><img src='images/cloth.png' class='resImg'><span class='cnt'>" + r.cloth + "</span>" + (tLv < 5 ? "<span class='need'>(" + (tNeed > 0 ? t("need") + " " + tNeed : "✓") + ")</span>" : "") + "</span></div>";
-      h += "<div class='chDt" + (sCanUp ? " canUp" : "") + "'><span class='chDl'>🟢</span><span class='chDn'>" + sLv + "/5</span><span class='chDc'><img src='images/paper.png' class='resImg'><span class='cnt'>" + r.paper + "</span>" + (sLv < 5 ? "<span class='need'>(" + (sNeed > 0 ? t("need") + " " + sNeed : "✓") + ")</span>" : "") + "</span></div>";
-      h += "<div class='chDt" + (pCanUp ? " canUp" : "") + "'><span class='chDl'>🔵</span><span class='chDn'>" + pLv + "/5</span><span class='chDc'><img src='images/coin.png' class='resImg'><span class='cnt'>" + r.coin + "</span>" + (pLv < 5 ? "<span class='need'>(" + (pNeed > 0 ? t("need") + " " + pNeed : "✓") + ")</span>" : "") + "</span></div></div></div>";
+      h += "<div class='chDt" + (tCanUp ? " canUp" : "") + "'><span class='chDl'>🟡</span><span class='chDn'>" + tLv + "/5</span><span class='chDc'><img src='" + 'https://piravlos.github.io/catan/images/cloth.png' + "' class='resImg'><span class='cnt'>" + r.cloth + "</span>" + (tLv < 5 ? "<span class='need'>(" + (tNeed > 0 ? t("need") + " " + tNeed : "✓") + ")</span>" : "") + "</span></div>";
+      h += "<div class='chDt" + (sCanUp ? " canUp" : "") + "'><span class='chDl'>🟢</span><span class='chDn'>" + sLv + "/5</span><span class='chDc'><img src='" + 'https://piravlos.github.io/catan/images/paper.png' + "' class='resImg'><span class='cnt'>" + r.paper + "</span>" + (sLv < 5 ? "<span class='need'>(" + (sNeed > 0 ? t("need") + " " + sNeed : "✓") + ")</span>" : "") + "</span></div>";
+      h += "<div class='chDt" + (pCanUp ? " canUp" : "") + "'><span class='chDl'>🔵</span><span class='chDn'>" + pLv + "/5</span><span class='chDc'><img src='" + 'https://piravlos.github.io/catan/images/coin.png' + "' class='resImg'><span class='cnt'>" + r.coin + "</span>" + (pLv < 5 ? "<span class='need'>(" + (pNeed > 0 ? t("need") + " " + pNeed : "✓") + ")</span>" : "") + "</span></div></div></div>";
 
       // Build section (C&K buildings only - development upgrades shown in Development section)
       h += "<div class='chS'><div class='chT'>" + t("build") + "</div><div class='chB'>";
